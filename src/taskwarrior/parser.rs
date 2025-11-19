@@ -1,6 +1,28 @@
 use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+
+fn deserialize_challenge<'de, D>(deserializer: D) -> Result<Option<u8>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    use serde::de::Error;
+    let value: Option<serde_json::Value> = Option::deserialize(deserializer)?;
+
+    match value {
+        None => Ok(None),
+        Some(serde_json::Value::Number(n)) => {
+            if let Some(i) = n.as_u64() {
+                Ok(Some(i as u8))
+            } else if let Some(f) = n.as_f64() {
+                Ok(Some(f as u8))
+            } else {
+                Ok(None)
+            }
+        },
+        Some(_) => Ok(None),
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaskData {
@@ -11,6 +33,7 @@ pub struct TaskData {
     pub urgency: Option<f64>,
     pub due: Option<String>,
     pub end: Option<String>,
+    #[serde(deserialize_with = "deserialize_challenge")]
     pub challenge: Option<u8>,
     pub project: Option<String>,
     pub stat1: Option<String>,
