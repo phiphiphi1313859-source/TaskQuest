@@ -73,10 +73,10 @@ impl Character {
     pub fn complete_task(&mut self, challenge: u8, stat1: Option<StatType>, stat2: Option<StatType>) {
         self.tasks_completed += 1;
 
-        // Base formula: challenge / 30.0
-        // This means ~6 tasks at challenge 5 = 1 stat point (early game)
+        // Base formula: challenge / 20.0
+        // Challenge 1: 20 tasks per point, Challenge 5: 4 tasks per point, Challenge 10: 2 tasks per point
         // Diminishing returns are applied inside increase_stat()
-        let base_gain = challenge as f64 / 30.0;
+        let base_gain = challenge as f64 / 20.0;
 
         // stat1 gets full gain, stat2 gets half
         let stat1_gain = base_gain;
