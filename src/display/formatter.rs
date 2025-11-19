@@ -34,22 +34,22 @@ impl Formatter {
         println!("║ {:12} {:>6}  │  Progression:                           ║",
             "Stats:".bold(), "");
         println!("║   STR: {:>3}        │  Level: {}                               ║",
-            character.stats.strength, character.level);
+            character.stats.strength.floor() as u16, character.level);
         println!("║   DEX: {:>3}        │  XP: {}/{} ({:.1}%)              ║",
-            character.stats.dexterity,
+            character.stats.dexterity.floor() as u16,
             character.total_xp,
             character.total_xp + character.xp_to_next_level(),
             character.xp_progress_percent()
         );
         println!("║   CON: {:>3}        │  Gold: {} 💰                            ║",
-            character.stats.constitution, character.gold);
+            character.stats.constitution.floor() as u16, character.gold);
         println!("║   INT: {:>3}        │                                         ║",
-            character.stats.intelligence
+            character.stats.intelligence.floor() as u16
         );
         println!("║   WIS: {:>3}        │  Next Level: {} XP                      ║",
-            character.stats.wisdom, character.xp_to_next_level());
+            character.stats.wisdom.floor() as u16, character.xp_to_next_level());
         println!("║   CHA: {:>3}        │  Tasks Completed: {} ✓                  ║",
-            character.stats.charisma, character.tasks_completed);
+            character.stats.charisma.floor() as u16, character.tasks_completed);
 
         println!("{}", "╠════════════════════════════════════════════════════════════════╣".cyan());
 
@@ -80,15 +80,23 @@ impl Formatter {
             }
         }
 
-        // Find the highest stat for relative comparison
-        let max_stat = *[
-            character.stats.strength,
-            character.stats.dexterity,
-            character.stats.constitution,
-            character.stats.intelligence,
-            character.stats.wisdom,
-            character.stats.charisma,
-        ].iter().max().unwrap_or(&10).max(&100u16); // At least 100 for scaling
+        // Find the highest stat for relative comparison (convert f64 to u16)
+        let stats_array = [
+            character.stats.strength.floor() as u16,
+            character.stats.dexterity.floor() as u16,
+            character.stats.constitution.floor() as u16,
+            character.stats.intelligence.floor() as u16,
+            character.stats.wisdom.floor() as u16,
+            character.stats.charisma.floor() as u16,
+        ];
+        let max_stat = stats_array.iter().max().unwrap_or(&10).max(&100u16); // At least 100 for scaling
+
+        let str_val = character.stats.strength.floor() as u16;
+        let dex_val = character.stats.dexterity.floor() as u16;
+        let con_val = character.stats.constitution.floor() as u16;
+        let int_val = character.stats.intelligence.floor() as u16;
+        let wis_val = character.stats.wisdom.floor() as u16;
+        let cha_val = character.stats.charisma.floor() as u16;
 
         println!();
         println!("{}", "╔══════════════════════════════════════════════════════╗".yellow());
@@ -99,12 +107,12 @@ impl Formatter {
         println!("║ Level: {}                                           ║", character.level);
         println!("{}", "╠══════════════════════════════════════════════════════╣".yellow());
         println!("║ ABILITY SCORES:                                      ║");
-        println!("║   Strength:     {:>3} [{}] ║", character.stats.strength, stat_bar(character.stats.strength, max_stat));
-        println!("║   Dexterity:    {:>3} [{}] ║", character.stats.dexterity, stat_bar(character.stats.dexterity, max_stat));
-        println!("║   Constitution: {:>3} [{}] ║", character.stats.constitution, stat_bar(character.stats.constitution, max_stat));
-        println!("║   Intelligence: {:>3} [{}] ║", character.stats.intelligence, stat_bar(character.stats.intelligence, max_stat));
-        println!("║   Wisdom:       {:>3} [{}] ║", character.stats.wisdom, stat_bar(character.stats.wisdom, max_stat));
-        println!("║   Charisma:     {:>3} [{}] ║", character.stats.charisma, stat_bar(character.stats.charisma, max_stat));
+        println!("║   Strength:     {:>3} [{}] ║", str_val, stat_bar(str_val, *max_stat));
+        println!("║   Dexterity:    {:>3} [{}] ║", dex_val, stat_bar(dex_val, *max_stat));
+        println!("║   Constitution: {:>3} [{}] ║", con_val, stat_bar(con_val, *max_stat));
+        println!("║   Intelligence: {:>3} [{}] ║", int_val, stat_bar(int_val, *max_stat));
+        println!("║   Wisdom:       {:>3} [{}] ║", wis_val, stat_bar(wis_val, *max_stat));
+        println!("║   Charisma:     {:>3} [{}] ║", cha_val, stat_bar(cha_val, *max_stat));
         println!("{}", "╠══════════════════════════════════════════════════════╣".yellow());
         println!("║ PROGRESSION:                                         ║");
         println!("║   Total XP:     {:>6}                                ║", character.total_xp);

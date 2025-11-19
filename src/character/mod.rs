@@ -73,15 +73,16 @@ impl Character {
     pub fn complete_task(&mut self, challenge: u8, stat1: Option<StatType>, stat2: Option<StatType>) {
         self.tasks_completed += 1;
 
-        // Calculate total stat gain from this task
-        let total_gain = challenge as u16 * 3;  // Total 3 points per challenge level
+        // Base formula: challenge / 30.0
+        // This means ~6 tasks at challenge 5 = 1 stat point (early game)
+        // Diminishing returns are applied inside increase_stat()
+        let base_gain = challenge as f64 / 30.0;
 
-        // stat1 gets 66% (2 points per challenge level)
-        // stat2 gets 33% (1 point per challenge level)
-        let stat1_gain = (total_gain * 2) / 3;  // 66%
-        let stat2_gain = total_gain / 3;         // 33%
+        // stat1 gets full gain, stat2 gets half
+        let stat1_gain = base_gain;
+        let stat2_gain = base_gain / 2.0;
 
-        // Increase stats if specified
+        // Increase stats if specified (diminishing returns applied automatically)
         if let Some(s1) = stat1 {
             self.stats.increase_stat(s1, stat1_gain);
         }

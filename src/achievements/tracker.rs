@@ -142,13 +142,16 @@ impl AchievementTracker {
             self.progress.tasks_with_due_date += 1;
         }
 
-        // Update highest stat
-        let max_stat = character.stats.strength
-            .max(character.stats.dexterity)
-            .max(character.stats.constitution)
-            .max(character.stats.intelligence)
-            .max(character.stats.wisdom)
-            .max(character.stats.charisma);
+        // Update highest stat (convert f64 to u16)
+        let max_stat = [
+            character.stats.strength.floor() as u16,
+            character.stats.dexterity.floor() as u16,
+            character.stats.constitution.floor() as u16,
+            character.stats.intelligence.floor() as u16,
+            character.stats.wisdom.floor() as u16,
+            character.stats.charisma.floor() as u16,
+        ].into_iter().max().unwrap_or(10);
+
         if max_stat > self.progress.highest_stat_value {
             self.progress.highest_stat_value = max_stat;
         }
@@ -244,12 +247,12 @@ impl AchievementTracker {
             "punctual_perfectionist" => self.progress.on_time_tasks >= 100,
 
             // Power achievements (stat-based)
-            "strength_incarnate" => character.stats.strength >= 100,
-            "lightning_reflexes" => character.stats.dexterity >= 100,
-            "iron_constitution" => character.stats.constitution >= 100,
-            "brilliant_mind" => character.stats.intelligence >= 100,
-            "sage_wisdom" => character.stats.wisdom >= 100,
-            "magnetic_personality" => character.stats.charisma >= 100,
+            "strength_incarnate" => character.stats.strength >= 100.0,
+            "lightning_reflexes" => character.stats.dexterity >= 100.0,
+            "iron_constitution" => character.stats.constitution >= 100.0,
+            "brilliant_mind" => character.stats.intelligence >= 100.0,
+            "sage_wisdom" => character.stats.wisdom >= 100.0,
+            "magnetic_personality" => character.stats.charisma >= 100.0,
 
             // Legendary stat achievements
             "legendary_strength" => self.progress.highest_stat_value >= 500,
@@ -318,12 +321,12 @@ impl AchievementTracker {
             "time_master" => (self.progress.tasks_with_due_date.min(100) as f64) / 100.0,
             "punctual_perfectionist" => (self.progress.on_time_tasks.min(100) as f64) / 100.0,
 
-            "strength_incarnate" => (character.stats.strength.min(100) as f64) / 100.0,
-            "lightning_reflexes" => (character.stats.dexterity.min(100) as f64) / 100.0,
-            "iron_constitution" => (character.stats.constitution.min(100) as f64) / 100.0,
-            "brilliant_mind" => (character.stats.intelligence.min(100) as f64) / 100.0,
-            "sage_wisdom" => (character.stats.wisdom.min(100) as f64) / 100.0,
-            "magnetic_personality" => (character.stats.charisma.min(100) as f64) / 100.0,
+            "strength_incarnate" => character.stats.strength.min(100.0) / 100.0,
+            "lightning_reflexes" => character.stats.dexterity.min(100.0) / 100.0,
+            "iron_constitution" => character.stats.constitution.min(100.0) / 100.0,
+            "brilliant_mind" => character.stats.intelligence.min(100.0) / 100.0,
+            "sage_wisdom" => character.stats.wisdom.min(100.0) / 100.0,
+            "magnetic_personality" => character.stats.charisma.min(100.0) / 100.0,
 
             "legendary_strength" => (self.progress.highest_stat_value.min(500) as f64) / 500.0,
             "transcendent_power" => (self.progress.highest_stat_value.min(1000) as f64) / 1000.0,
